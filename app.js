@@ -13,7 +13,7 @@ client.on('ready', () => {
 
 client.on('message', async (msg) => {
   if (msg.content === '!reamer_ip') {
-    axios.get(
+    const message = await axios.get(
       'https://ifconfig.co/json'
     )
     .then(response => {
@@ -21,11 +21,16 @@ client.on('message', async (msg) => {
       try {
         message = "Your ip is ```" + response.data.ip + "```";
       } catch (error) {
-        message = "```" + error.toString() + "```";
+        console.error(error);
+        message = "Error: ```" + error.toString() + "```";
       }
-      msg.reply(message);
+      return message;
     })
-    .catch(console.error);
+    .catch((error) => {
+      console.error(error);
+      return error.toString();
+    });
+    msg.reply(message);
   }
 });
 
